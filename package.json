@@ -8,7 +8,8 @@
 	"dependencies": {
 		"@cryptolink/contracts": "github:CryptoLinkTech/npm",
 		"@openzeppelin/contracts": "^4.9.5",
-		"base64-sol": "github:Brechtpd/base64"
+		"base64-sol": "github:Brechtpd/base64",
+		"bs58": "^5.0.0"
 	},
 	"devDependencies": {
 		"@typechain/ethers-v6": "^0.5.1",

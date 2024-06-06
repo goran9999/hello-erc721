@@ -10,7 +10,7 @@ contract HelloERC721 is ERC721, MessageClient {
     uint public nextNftId;
 
     constructor() ERC721("Hello ERC721!", "H721") {
-        nextNftId = block.chainid * 10**4;
+        nextNftId = block.chainid * 10 ** 4;
     }
 
     function mint() external {
@@ -18,17 +18,33 @@ contract HelloERC721 is ERC721, MessageClient {
         nextNftId++;
     }
 
-    function bridge(uint _destChainId, address _recipient, uint _nftId) external onlyActiveChain(_destChainId) {
-        require(ownerOf(_nftId) == msg.sender, "HelloERC721: caller is not the owner of the nft");
+    function bridge(
+        uint _destChainId,
+        bytes32 _recipient,
+        uint _nftId
+    ) external onlyActiveChain(_destChainId) {
+        require(
+            ownerOf(_nftId) == msg.sender,
+            "HelloERC721: caller is not the owner of the nft"
+        );
+
+        string memory uri = tokenURI(_nftId);
 
         // burn nft
         _burn(_nftId);
 
         // send cross chain message
-        _sendMessage(_destChainId, abi.encode(_recipient, _nftId));
+        _sendMessage(_destChainId, abi.encode(_recipient, uri));
     }
 
-    function messageProcess(uint, uint _sourceChainId, address _sender, address, uint, bytes calldata _data) external override  onlySelf(_sender, _sourceChainId)  {
+    function messageProcess(
+        uint,
+        uint _sourceChainId,
+        address _sender,
+        address,
+        uint,
+        bytes calldata _data
+    ) external override onlySelf(_sender, _sourceChainId) {
         // decode message
         (address _recipient, uint _nftId) = abi.decode(_data, (address, uint));
 
@@ -36,13 +52,14 @@ contract HelloERC721 is ERC721, MessageClient {
         _mint(_recipient, _nftId);
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-        return string(abi.encodePacked('data:application/json;base64,', 
-            Base64.encode(bytes(abi.encodePacked(
-                '{"name":"CryptoLink.Tech Hello ERC721 #', tokenId, '", "description":"Hello ERC721 cross chain NFT example. https://github.com/CryptoLinkTech/hello-erc721", "image":"https://i.postimg.cc/FKkpPByb/cl-logo.png"}')
-            )))
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
         );
+
+        return "https://shorturl.at/fuwT0";
     }
 }
